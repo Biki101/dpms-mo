@@ -43,7 +43,6 @@ class AppointmentService {
       body: jsonEncode(data),
     );
     if (response.statusCode == 200) {
-      print(response.body);
       // ignore: avoid_print
       return jsonDecode(response.body);
     } else {

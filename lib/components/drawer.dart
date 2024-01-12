@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:dental/pages/notification.dart';
+import 'package:dental/services/drawer.service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 import 'package:dental/pages/appointment.dart';
@@ -70,30 +71,6 @@ class _NavDrawerState extends State<NavDrawer> {
 
   getUserImage() async {}
 
-  Future<Uint8List> fetchBlobImage() async {
-    final Uint8List error = Uint8List(10);
-
-    String apiUrl =
-        'https://anurodh.com.np/test/blobImage.php'; // Replace with your API endpoint
-
-    try {
-      http.Response response = await http.get(Uri.parse(apiUrl));
-
-      if (response.statusCode == 200) {
-        // Successful API request
-        Uint8List responseData = Uint8List.fromList(response.bodyBytes);
-        return responseData;
-      } else {
-        // Handle errors
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
-        return error;
-      }
-    } catch (err) {
-      print('Error: $err');
-      return error;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -113,12 +90,12 @@ class _NavDrawerState extends State<NavDrawer> {
               children: [
                 CircleAvatar(
                   radius: 30,
-                  // child: Image.network('https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?cs=srgb&dl=pexels-mohamed-abdelghaffar-771742.jpg&fm=jpg'),
+
                   child: FutureBuilder<Uint8List>(
-                    future: fetchBlobImage(),
+                    future: DrawerService().fetchBlobImage(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
+                        return Text('loading');
                       } else if (snapshot.hasError) {
                         print('Error: ${snapshot.error}');
                         return Text('Error: ${snapshot.error}');
@@ -166,7 +143,7 @@ class _NavDrawerState extends State<NavDrawer> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.home),
+            leading: Icon(Icons.calendar_month),
             title: Text("Appointment"),
             onTap: () {
               Navigator.pop(context);
@@ -201,6 +178,7 @@ class _NavDrawerState extends State<NavDrawer> {
               );
             },
           ),
+          Container(),
           ListTile(
             title: Text(
               activeUser != null

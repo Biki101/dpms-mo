@@ -9,6 +9,7 @@ class AuthService {
   var token;
 
   Future login(data, baseUrl) async {
+    print(baseUrl);
     final response = await http.post(
       Uri.parse('$baseUrl/login'),
       headers: {
